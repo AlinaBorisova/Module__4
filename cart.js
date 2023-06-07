@@ -1,24 +1,26 @@
-const Cart = function (goods = [], totalPrice = 0, count = 0) {
-    this.goods = goods;
-    this.totalPrice = totalPrice;
-    this.count = count;
+const Cart = function (arr = []) {
+    this.goods = arr;
+    this.count = 0;
+    Cart.totalPrice = 0;
 };
 
 Cart.prototype.calculateGoodsPrice = function () {
     let sum = 0;
+
     this.goods.forEach(item => {
-        sum += item.price * item.count
-    })
+        if(item.goods.discount > 0) {
+            sum += item.goods.price * ((100 - item.goods.discount) / 100);
+        } else {
+            sum += item.goods.price;
+        }
+    });
+    console.log('this.goods', this.goods)
     this.totalPrice = sum;
 };
 
-Cart.prototype.addGoods = function (title, price, count = 1) {
-    this.goods.push({
-        title: title,
-        price: price,
-        count: count,
-    });
-    this.increaseCount(count);
+Cart.prototype.addGoods = function (...obj) {
+    this.goods.push(...obj);
+    this.increaseCount(this.goods.length);
     this.calculateGoodsPrice();
 };
 
@@ -42,57 +44,37 @@ Cart.prototype.print = function () {
     console.log('totalPrice =', this.getTotalPrice());
 };
 
-/*
-* goods
-* */
-const Goods = function(
-        options
-    ) {
-    Cart.call(this);
-    this.title = options.title;
-    this.price = options.price;
-    this.discount = options.discount;
-    this.addGoods(
-        this.title, this.price, this.discount
-    )
-    // goods.push({
-    //     title:   options.title,
-    //     price:   options.price,
-    //     discount:   options.discount,
-    // })
 
+const Goods = function(options) {
+    Cart.apply(this, arguments);
 };
-Object.setPrototypeOf(Goods.prototype, Cart.prototype);
-// Goods.prototype.constructor = Goods;
-// Goods.prototype = Object.create(Cart.prototype);
+const FoodGoods = function (options) {
+    Goods.apply(this, arguments);
+    this.goods = options
+};
+const ClothingGoods = function (options) {
+    Goods.apply(this, arguments);
+    this.goods = options
+};
+const TechnicsGoods = function (options) {
+    Goods.apply(this, arguments);
+    this.goods = options
+};
+
+const modelCart = new Cart();
+
+const food = new FoodGoods({title: 'apple', price: 200, discount: 5, kkal:270});
+const clothes = new ClothingGoods({title: 'T-short', price: 3200, discount: 10, material:'Cotton'});
+const tech = new TechnicsGoods({title: 'Phone', price: 113200, discount: 20, typeTech:'Gadget'});
 
 
+modelCart.addGoods(food, clothes, tech);
 
-// const mazda = new Goods({price: 1500000, title: 'Mazda', discount: 10})
-// console.log(mazda)
-//
-const bmv = new Goods({price:200000, title: 'BMW', discount: 5})
-bmv.print()
-console.log(bmv)
+console.log(modelCart);
 
-const test = new Goods({title: 'Test title', price: 7000, discount: 10 });
-test.print();
-console.log(test)
+modelCart.print();
 
 
-
-// const FoodGoods = function (options) {
-//     Goods.call(this, arguments);
-//     this.kkal = options.kkal;
-// };
-// const СlothingGoods = function (price, title, discount, material) {
-//     Goods.call(this, price, title, discount);
-//     this.material = material;
-// };
-// const TechnicsGoods = function (price, title, discount, typeTech) {
-//     Goods.call(this, price, title, discount);
-//     this.typeTech = typeTech;
-// }
 
 
 
