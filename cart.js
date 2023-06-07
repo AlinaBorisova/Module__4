@@ -45,8 +45,9 @@ Cart.prototype.print = function () {
 
 
 const Goods = function(options) {
-    Cart.apply(this, arguments);
-    this.count = 1;
+    this.price = options.price;
+    this.title = options.title;
+    this.discount = options.discount;
 };
 const FoodGoods = function (options) {
     Goods.apply(this, arguments);
